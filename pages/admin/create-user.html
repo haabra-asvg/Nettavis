@@ -7,6 +7,18 @@
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-  <p>test css</p>
+  <form method="POST" action="/admin/create-user">
+    <input type="text" name="name" placeholder="name">
+    <input type="email" name="email" placeholder="email">
+    <select name="role" id="role">
+      <option value="select">select user blyat</option>
+      <option value="admin">admin</option>
+      <option value="journalist">journalist</option>
+      <option value="user">user</option>
+    </select>
+    <input type="password" name="password" placeholder="password">
+    <input type="password" name="rpassword" placeholder="repeat password">
+    <button type="submit">create user</button>
+  </form>
 </body>
 </html>

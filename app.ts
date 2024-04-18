@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { PrismaClient } from '@prisma/client';
 import session from 'express-session';
+import bcrypt from 'bcrypt';
 
 declare module 'express-session' {
   export interface SessionData {
@@ -59,7 +60,7 @@ app.post("/login", async (req, res) => {
     return console.log("User not found");
   }
 
-  if (user.password !== password) {
+  if (bcrypt.compareSync(password, user.password) === false) {
     return console.log("Invalid password")
   }
 
@@ -85,6 +86,41 @@ app.use("/admin", checkAdmin);
 
 app.get("/admin/create-user", (req, res) => {
   res.sendFile(__dirname + "/pages/admin/create-user.html");
+})
+
+app.post("/admin/create-user", async (req, res) => {
+  const { name, email, role, password, rpassword } = req.body;
+
+  const checkEmail = await prisma.users.findMany({
+    where: {
+      email
+    }
+  })
+
+  if(role === "select") {
+    return console.log("Please select a role");
+  }
+  
+  if(checkEmail.length > 0) {
+    return console.log("Email already exists");
+  }
+
+  if(!password === rpassword) {
+    return console.log("Passwords do not match");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.users.create({
+    data: {
+      name: name,
+      email: email,
+      role: role,
+      password: hashedPassword
+    }
+  });
+
+  res.redirect("/admin");
 })
 
 app.listen(port, () => {
