@@ -123,6 +123,16 @@ app.post("/admin/create-user", async (req, res) => {
   res.redirect("/admin");
 });
 
+app.get("/api/users", async (req, res) => {
+  const users = await prisma.users.findMany();
+  return res.json(users);
+})
+
+app.get("/api/maintenance", async (req, res) => {
+  const getMaintenance = await prisma.maintenance.findMany();
+  return res.json(getMaintenance);
+})
+
 app.get("/admin/users", (req, res) => {
   res.sendFile(__dirname + "/pages/admin/users.html");
 });

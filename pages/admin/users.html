@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 </head>
+<script defer>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const getMaintenance = await fetch('http://localhost:3000/api/maintenance');
+    const jsonMaintenance = await getMaintenance.json();
+    let maintenanceStatus;
+    jsonMaintenance.forEach(maintenance => {
+      if (maintenance.page === "api") {
+        maintenanceStatus = maintenance.value;
+      }
+    })
+
+    if (!maintenanceStatus) {
+      const users = await fetch('http://localhost:3000/api/users');
+      const cachedUsers = await users.json();
+      const sortedUsers = cachedUsers.sort((a, b) => {
+        const roles = ['admin', 'journalist', 'subscriber', 'user'];
+        return roles.indexOf(a.role) - roles.indexOf(b.role);
+      });
+      sortedUsers.forEach(user => {
+        const tr = document.createElement('tr');
+        const tbody = document.getElementById("tbody");
+
+        const tdName = document.createElement('td');
+        tdName.innerText = user.name;
+
+        const tdEmail = document.createElement('td');
+        tdEmail.innerText = user.email;
+
+        const tdRole = document.createElement('td');
+        tdRole.innerText = user.role;
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdEmail);
+        tr.appendChild(tdRole);
+        tbody.appendChild(tr);
+      });
+    } else {
+      const tbody = document.getElementById("tbody");
+      return tbody.innerText = "API is under maintenance";
+    }
+  })
+</script>
+
 <body>
-  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody class="tbody" id="tbody">
+
+    </tbody>
+  </table>
 </body>
+
 </html>

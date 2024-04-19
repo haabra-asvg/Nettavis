@@ -1,12 +1,11 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
-}
-
-generator client {
-  provider = "prisma-client-js"
-
-  previewFeatures = ["fullTextSearch"]
 }
 
 model Users {
@@ -23,18 +22,23 @@ model Users {
 model Journalist {
   id              Int       @id @default(autoincrement())
   journalistEmail String
+  articlesId      Int?
   journalist      Users     @relation(fields: [journalistEmail], references: [email])
   Articles        Articles? @relation(fields: [articlesId], references: [id])
-  articlesId      Int?
 }
 
 model Articles {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  views     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id           Int          @id @default(autoincrement())
+  title        String
+  content      String
+  views        Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   journalister Journalist[]
+}
+
+model Maintenance {
+  id    Int     @id @default(autoincrement())
+  page  String
+  value Boolean
 }
