@@ -121,7 +121,11 @@ app.post("/admin/create-user", async (req, res) => {
   });
 
   res.redirect("/admin");
-})
+});
+
+app.get("/admin/users", (req, res) => {
+  res.sendFile(__dirname + "/pages/admin/users.html");
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
