@@ -28,6 +28,9 @@
         const tr = document.createElement('tr');
         const tbody = document.getElementById("tbody");
 
+        const tdId = document.createElement('td');
+        tdId.innerText = user.id;
+
         const tdName = document.createElement('td');
         tdName.innerText = user.name;
 
@@ -37,6 +40,7 @@
         const tdRole = document.createElement('td');
         tdRole.innerText = user.role;
 
+        tr.appendChild(tdId);
         tr.appendChild(tdName);
         tr.appendChild(tdEmail);
         tr.appendChild(tdRole);
@@ -53,6 +57,7 @@
   <table class="table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Username</th>
         <th>Email</th>
         <th>Role</th>

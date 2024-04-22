@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", (req: express.Request, res: express.Response) => {
-  if ((req.session as any).user) {
+  if (req.session.user) {
     return res.redirect("/");
   } else {
     res.sendFile(__dirname + "/pages/login.html");
@@ -91,7 +91,7 @@ app.get("/admin/create-user", (req, res) => {
 app.post("/admin/create-user", async (req, res) => {
   const { name, email, role, password, rpassword } = req.body;
 
-  const checkEmail = await prisma.users.findMany({
+  const checkEmail = await prisma.users.findUnique({
     where: {
       email
     }
@@ -101,7 +101,7 @@ app.post("/admin/create-user", async (req, res) => {
     return console.log("Please select a role");
   }
   
-  if(checkEmail.length > 0) {
+  if(checkEmail) {
     return console.log("Email already exists");
   }
 
@@ -124,7 +124,14 @@ app.post("/admin/create-user", async (req, res) => {
 });
 
 app.get("/api/users", async (req, res) => {
-  const users = await prisma.users.findMany();
+  const users = await prisma.users.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  });
   return res.json(users);
 })
 
@@ -136,6 +143,26 @@ app.get("/api/maintenance", async (req, res) => {
 app.get("/admin/users", (req, res) => {
   res.sendFile(__dirname + "/pages/admin/users.html");
 });
+
+app.get("/admin/manage-user/:id", async (req, res) => {
+  const checkUser = await prisma.users.findMany({
+    where: {
+      id: Number(req.params.id)
+    }
+  });
+
+  if(checkUser.length === 0) {
+    return res.redirect("/admin/users");
+  }
+
+  if(req.session.user && req.session.user.id) {
+    if(req.session.user.id === checkUser[0].id) {
+      return res.redirect("/admin/users");
+    }
+  }
+
+  res.sendFile(__dirname + "/pages/admin/manage-user.html");
+})
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<script defer>
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const url = window.location.pathname;
+    const id = await Number(url.split('/').pop());
+
+    const fetchUsers = await fetch('http://localhost:3000/api/users/').then(res => res.json());
+    const User = await fetchUsers.find(user => user.id === id);
+
+    document.getElementById('id').value = User.id;
+    document.getElementById('name').value = User.name;
+    document.getElementById('email').value = User.email;
+    document.getElementById('role').value = User.role;
+
+    console.log(User);
+  })
+
+</script>
+<body>
+  <form action="/admin/manage-user" method="POST">
+    <input name="id" id="id" readonly>
+    <input name="name" id="name">
+    <input name="email" id="email">
+    <select name="role" id="role">
+      <option value="select">select option kurwa</option>
+      <option value="admin">admin</option>
+      <option value="journalist">journalist</option>
+      <option value="subscriber">subscriber</option>
+      <option value="user">user</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
